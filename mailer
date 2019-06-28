@@ -1,0 +1,39 @@
+#!/usr/bin/expect
+log_user 0
+
+set now [ exec date +%s ]
+set username $env(GMAIL_USERNAME)
+set password $env(GMAIL_PASSWORD)
+set from $env(MAIL_FROM)
+set msg "/tmp/mail-$now.txt"
+
+log_user 1
+spawn vim $msg
+interact
+log_user 0
+set to [ exec head -1 $msg ]
+set addr_list [ split $to \; ]
+set subject [ exec head -2 $msg | tail -1 ]
+
+
+
+spawn openssl s_client -connect smtp.gmail.com:465 -crlf -ign_eof
+send "EHLO test\r"
+send "AUTH LOGIN\r"
+expect "334 VXNlcm5hbWU6" { send "$username\r" }
+expect "334 UGFzc3dvcmQ6" { send "$password\r" }
+expect "Accepted" { send "\r" }
+send "MAIL FROM: <$from>\r"
+foreach addr $addr_list {
+	expect  "250*" { send "rcpt to: $addr\r"}
+}
+expect "250*" { send "DATA\r" }
+
+send "To: $to\r"
+expect "354*" { send "$subject\r" } 
+send "\r"
+send [ exec tail -n +3 $msg | sed {s/^\.$/<.>/g}]
+send "\r"
+send ".\r"
+send "quit\r"
+interact
