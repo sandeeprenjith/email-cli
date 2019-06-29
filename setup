@@ -1,0 +1,86 @@
+#!/bin/bash
+user=$USER
+usage() {
+	echo The program sets up gmail cli
+	echo "    Usage: sudo $1 -u <username> -p <password> -a <email address>"
+	echo "    Print this help message: $1 -h"
+
+	}
+	
+
+# Creating configs
+#--------------------------------------------------------------------------------
+
+while getopts "u:p:a:h" opt
+do
+case $opt in
+	u) username=$OPTARG
+	;;
+	p) password=$OPTARG
+	;;
+	a) email_from=$OPTARG
+	;;
+	h) usage
+	;;
+	\?) echo "Invalid Option: $OPTARG"; usage; exit 1
+esac
+done
+now=`date +%s`
+
+if [ -d "/opt/gmail-cli/$user" ]
+then
+	sudo mv "/opt/gmail-cli/$user" "/opt/gmail-cli/$user-$now"
+	sudo mkdir -p "/opt/gmail-cli/$user"
+	sudo chown -R $user "/opt/gmail-cli/$user"
+else
+	sudo mkdir -p "/opt/gmail-cli/$user"
+	sudo chown -R $user "/opt/gmail-cli/$user"
+fi
+
+chmod 700 "/opt/gmail-cli/$user"
+
+username_hash=`echo -n $username | base64`
+password_hash=`echo -n $password | base64`
+
+config=`cat << EOM
+$username_hash
+$password_hash
+$email_from
+EOM`
+
+echo "$config" > /opt/gmail-cli/$user/config.sh
+sudo chmod 700 /opt/gmail-cli/$user/config.sh
+
+#--------------------------------------------------------------------------------
+# Installing 
+#--------------------------------------------------------------------------------
+path=$PATH
+path_count=`echo $path | awk -F ":" '{print NF}'`
+if [ ! -z `echo $path | grep -o /usr/local/bin` ] && [ -d /usr/local/bin ]; then app_path="/usr/local/bin"
+elif [  ! -z `echo $path | grep -o /usr/bin` ] && [ -d /usr/local/bin ]; then app_path="/usr/bin"
+else
+	for loc in `seq $path_count -1 1`
+	do
+		if [ -d $loc ]; 
+		then 
+			app_path=$loc
+			break
+		fi
+	done
+fi
+
+sudo cp mailer $app_path/mailer
+sudo chmod +x $app_path/mailer
+#--------------------------------------------------------------------------------
+
+# Checking if install is successful
+#--------------------------------------------------------------------------------
+
+if [ -d "/opt/gmail-cli/$user" ] && [ -f "/opt/gmail-cli/$user/config.sh" ] && [ -f "$app_path/mailer" ]
+then
+	echo "Setup Completed Successfully"
+else
+	echo "Setup Failed"
+fi
+
+#--------------------------------------------------------------------------------

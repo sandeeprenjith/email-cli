@@ -1,10 +1,12 @@
 #!/usr/bin/expect
 log_user 0
 
+set user $env(USER)
+set config "/opt/gmail-cli/$user/config.sh"
 set now [ exec date +%s ]
-set username $env(GMAIL_USERNAME)
-set password $env(GMAIL_PASSWORD)
-set from $env(MAIL_FROM)
+set username [ exec sed {1q;d} $config ]
+set password [ exec sed {2q;d} $config ]
+set from [ exec sed {3q;d} $config ]
 set msg "/tmp/mail-$now.txt"
 
 log_user 1
@@ -12,7 +14,7 @@ spawn vim $msg
 interact
 log_user 0
 set to [ exec head -1 $msg ]
-set addr_list [ split $to \; ]
+set addr_list [ split $to ]
 set subject [ exec head -2 $msg | tail -1 ]
 
 
