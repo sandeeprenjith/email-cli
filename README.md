@@ -31,17 +31,17 @@ At the time of writing this (Sun Jun 30 19:48:38 DST 2019), only Gmail is suppor
 * Clone this repo.
 
 ```
-git clone git@github.com:sandeeprenjith/gmail-cli.git
+git clone git@github.com:sandeeprenjith/email-cli.git
 
 ```
 
 or
 
 ```
-https://github.com/sandeeprenjith/gmail-cli.git
+https://github.com/sandeeprenjith/email-cli.git
 
 ```
-* cd into the gmail-cli directory.
+* cd into the email-cli directory.
 
 * Run the setup.sh file and provide your username, password and email address for gmail. 
 
