@@ -4,12 +4,14 @@ usage() {
 	echo The program sets up gmail cli
 	echo "    Usage: sudo $1 -u <username> -p <password> -a <email address>"
 	echo "    Print this help message: $1 -h"
-
+	exit 1
 	}
 	
 
 # Creating configs
 #--------------------------------------------------------------------------------
+
+
 
 while getopts "u:p:a:h" opt
 do
@@ -22,9 +24,16 @@ case $opt in
 	;;
 	h) usage
 	;;
-	\?) echo "Invalid Option: $OPTARG"; usage; exit 1
+	\?) echo "Invalid Option: $OPTARG"; usage
 esac
 done
+
+if [ $# -ne 6 ]
+then
+	usage
+fi
+
+ 
 now=`date +%s`
 
 if [ -d "/opt/gmail-cli/$user" ]
@@ -41,7 +50,6 @@ chmod 700 "/opt/gmail-cli/$user"
 
 username_hash=`echo -n $username | base64`
 password_hash=`echo -n $password | base64`
-
 config=`cat << EOM
 $username_hash
 $password_hash

@@ -1,18 +1,19 @@
 #!/usr/bin/expect
-log_user 0
+#log_user 0
 
 set user $env(USER)
-set config "/opt/gmail-cli/$user/config.sh"
+set config /opt/gmail-cli/$user/config.sh
 set now [ exec date +%s ]
-set username [ exec sed {1q;d} $config ]
-set password [ exec sed {2q;d} $config ]
-set from [ exec sed {3q;d} $config ]
+set username [ exec head -1 $config ]
+set password [ exec head -2 $config | tail -1 ]
+set from [ exec head -3 $config | tail -1 ]
 set msg "/tmp/mail-$now.txt"
 
-log_user 1
+#log_user 1
+puts "Press ENTER to send mail"
 spawn vim $msg
 interact
-log_user 0
+#log_user 0
 set to [ exec head -1 $msg ]
 set addr_list [ split $to ]
 set subject [ exec head -2 $msg | tail -1 ]
@@ -27,7 +28,7 @@ expect "334 UGFzc3dvcmQ6" { send "$password\r" }
 expect "Accepted" { send "\r" }
 send "MAIL FROM: <$from>\r"
 foreach addr $addr_list {
-	expect  "250*" { send "rcpt to: $addr\r"}
+	expect  "250*" { send "rcpt to: <$addr>\r"}
 }
 expect "250*" { send "DATA\r" }
 
