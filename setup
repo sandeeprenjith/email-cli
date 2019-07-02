@@ -36,17 +36,17 @@ fi
  
 now=`date +%s`
 
-if [ -d "/opt/gmail-cli/$user" ]
+if [ -d "/opt/email-cli/$user" ]
 then
-	sudo mv "/opt/gmail-cli/$user" "/opt/gmail-cli/$user-$now"
-	sudo mkdir -p "/opt/gmail-cli/$user"
-	sudo chown -R $user "/opt/gmail-cli/$user"
+	sudo mv "/opt/email-cli/$user" "/opt/email-cli/$user-$now"
+	sudo mkdir -p "/opt/email-cli/$user"
+	sudo chown -R $user "/opt/email-cli/$user"
 else
-	sudo mkdir -p "/opt/gmail-cli/$user"
-	sudo chown -R $user "/opt/gmail-cli/$user"
+	sudo mkdir -p "/opt/email-cli/$user"
+	sudo chown -R $user "/opt/email-cli/$user"
 fi
 
-chmod 700 "/opt/gmail-cli/$user"
+chmod 700 "/opt/email-cli/$user"
 
 username_hash=`echo -n $username | base64`
 password_hash=`echo -n $password | base64`
@@ -56,8 +56,8 @@ $password_hash
 $email_from
 EOM`
 
-echo "$config" > /opt/gmail-cli/$user/config.sh
-sudo chmod 700 /opt/gmail-cli/$user/config.sh
+echo "$config" > /opt/email-cli/$user/config.sh
+sudo chmod 700 /opt/email-cli/$user/config.sh
 
 #--------------------------------------------------------------------------------
 # Installing 
@@ -84,7 +84,7 @@ sudo chmod +x $app_path/mailer
 # Checking if install is successful
 #--------------------------------------------------------------------------------
 
-if [ -d "/opt/gmail-cli/$user" ] && [ -f "/opt/gmail-cli/$user/config.sh" ] && [ -f "$app_path/mailer" ]
+if [ -d "/opt/email-cli/$user" ] && [ -f "/opt/email-cli/$user/config.sh" ] && [ -f "$app_path/mailer" ]
 then
 	echo "Setup Completed Successfully"
 else

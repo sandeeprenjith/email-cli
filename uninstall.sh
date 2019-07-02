@@ -2,7 +2,7 @@
 
 mailer=`which mailer`
 user=$USER
-config="/opt/gmail-cli"
+config="/opt/email-cli"
 
 sudo rm -fr $mailer $config
 
