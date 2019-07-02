@@ -83,7 +83,7 @@ $ mailer -h
 Usage:
          mailer
                  or
-         mailer <filename>
+         mailer \<filename\>
 
 The program sends emails from the CLI.
 Use without arguments to compose emails using Vim. Saving and closing Vim will send the email.
